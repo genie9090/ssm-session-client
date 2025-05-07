@@ -3,7 +3,6 @@ package pkg
 import (
 	"net"
 	"strings"
-
 	"github.com/alexbacchin/ssm-session-client/config"
 	"github.com/alexbacchin/ssm-session-client/ssmclient"
 	"go.uber.org/zap"
@@ -15,8 +14,11 @@ func StartSSMPortForwarder(target string, sourcePort int) error {
 	if !strings.Contains(target, ":") {
 		target = target + ":22"
 	}
-	t, p, err := net.SplitHostPort(target)
-
+	userHost := strings.Split(target, "@")
+	if len(userHost) != 2 || !strings.Contains(userHost[1], ":") {
+		userHost[1] = userHost[1] + ":22"
+	}
+	t, p, err := net.SplitHostPort(userHost[1])
 	if err == nil {
 		port, err = net.LookupPort("tcp", p)
 		if err != nil {
@@ -24,6 +26,9 @@ func StartSSMPortForwarder(target string, sourcePort int) error {
 		}
 	} else {
 		t = target
+	}
+	if t == "devbox" {
+        t = GetTarget(t)
 	}
 	ssmcfg, err := BuildAWSConfig("ssm")
 	if err != nil {
