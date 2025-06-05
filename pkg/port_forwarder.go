@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"context"
 	"net"
 	"strings"
 	"github.com/alexbacchin/ssm-session-client/config"
@@ -30,7 +31,7 @@ func StartSSMPortForwarder(target string, sourcePort int) error {
 	if t == "devbox" {
         t = GetTarget(t)
 	}
-	ssmcfg, err := BuildAWSConfig("ssm")
+	ssmcfg, err := BuildAWSConfig(context.Background(), "ssm")
 	if err != nil {
 		zap.S().Fatal(err)
 	}
@@ -44,7 +45,7 @@ func StartSSMPortForwarder(target string, sourcePort int) error {
 		RemotePort: port,
 		LocalPort:  sourcePort,
 	}
-	ssmMessagesCfg, err := BuildAWSConfig("ssmmessages")
+	ssmMessagesCfg, err := BuildAWSConfig(context.Background(), "ssmmessages")
 	if err != nil {
 		zap.S().Fatal(err)
 	}
