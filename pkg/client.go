@@ -139,7 +139,7 @@ func BuildAWSConfig(ctx context.Context, service string) (aws.Config, error) {
 func GetTarget(target string) (t string) {
     user, _ := user.Current()
     tag_value := fmt.Sprintf("Developer-%s", user.Username)
-    ec2Cfg, err := BuildAWSConfig("ec2")
+    ec2Cfg, err := BuildAWSConfig(context.Background(), "ec2")
     if err != nil {
     	zap.S().Fatal(err)
     }
